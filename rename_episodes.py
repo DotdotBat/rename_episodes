@@ -55,9 +55,13 @@ def main():
         input("Press any key to abort")
         return
 
+    correctly_formatted_names = []
     for old, new in name_mapping.items():
         if old==new:
-            del name_mapping[old]
+            correctly_formatted_names.append(old)
+    
+    for name in correctly_formatted_names:
+        del name_mapping[name]
 
     if len(name_mapping) == 0:
         print("Nothing to rename detected")
