@@ -55,6 +55,18 @@ def main():
         input("Press any key to abort")
         return
 
+    for old, new in name_mapping.items():
+        if old==new:
+            del name_mapping[old]
+
+    if len(name_mapping) == 0:
+        print("Nothing to rename detected")
+        return
+
+    print("Renaming Preview:")
+    for old, new in name_mapping.items():
+        print(f"{old} -> {new}")
+
     confirm = input("Proceed with renaming?(Y/N): ")
     if "y" != confirm.lower():
         print("Aborted")
@@ -69,3 +81,6 @@ def main():
             return
     
     print(f"Successfully renamed {len(name_mapping)} files.")
+
+if __name__ == "__main__":
+    main()
