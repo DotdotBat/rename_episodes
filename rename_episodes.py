@@ -3,11 +3,18 @@ import re
 
 VIDEO_EXTENSIONS = {'.mp4', '.avi', '.mov', '.mkv'} #lower case
 
-def format_number(num):
-    if isinstance(num, float) and num.is_integer():
-        num = int(num)
-    return str(num)
-    
+def format_with_leading_zeros(number:int|float, leading_digits_count:int)->str:
+    if isinstance(number, float) and number.is_integer():
+        number = int(number)
+    num_str = str(number)
+    parts = num_str.split('.')
+    whole_part = parts[0].lstrip('-')  # Remove negative sign if present
+    padded_whole = whole_part.zfill(leading_digits_count)
+    if len(parts) == 2:  # If there was a decimal part
+        return f"{padded_whole}.{parts[1]}"
+    else:
+        return padded_whole
+
 def extract_season_episode(show_name:str):
     numbers = re.findall(r'(\d+\.\d+|\d+)', show_name)
     numbers = [float(n) if '.' in n else int(n) for n in numbers]
@@ -36,12 +43,30 @@ def main():
 
     name_mapping = {}
     colliding_new_names = set()
-        
+
+    #find biggest season episode numbers
+    biggest_season = 0
+    biggest_episode = 0
+    for f in files:
+        name, ext = os.path.splitext(f)
+        season , episode = extract_season_episode(name)
+        if episode is None:
+            continue
+        if biggest_season<season:
+            biggest_season = season
+        if biggest_episode<episode:
+            biggest_episode = episode        
+    
+    season_leading_digit_count = len(str(int(biggest_season)))
+    episode_leading_digit_count = len(str(int(biggest_episode)))
+
     for f in files:
         name, ext = os.path.splitext(f)
         s , e = extract_season_episode(name)
         if e is None:
             continue
+        s = format_with_leading_zeros(s, season_leading_digit_count)
+        e = format_with_leading_zeros(e, episode_leading_digit_count)
         new_filename = f"{show_name} S{s}E{e}{ext}"
         if new_filename in name_mapping.values():
             colliding_new_names.add(new_filename)

@@ -1,6 +1,6 @@
 import os
 import pytest
-from rename_episodes import extract_season_episode, is_video_file, format_number
+from rename_episodes import extract_season_episode, is_video_file, format_with_leading_zeros
 
 def test_extract_season_episode():
     # Basic cases
@@ -25,9 +25,13 @@ def test_extract_season_episode():
     assert e is None and s is None
 
 def test_format_number():
-    assert format_number(5) == "5"
-    assert format_number(14.5) == "14.5"
-    assert format_number(3.0) == "3"
+    assert format_with_leading_zeros(5, 1) == "5"
+    assert format_with_leading_zeros(14.5, 2) == "14.5"
+    assert format_with_leading_zeros(3.0, 1) == "3"
+    assert format_with_leading_zeros(13.4, 4)  == "0013.4"
+    assert format_with_leading_zeros(2, 2)     == "02"
+    assert format_with_leading_zeros(-5, 3)    == "005"
+    assert format_with_leading_zeros(123.45, 2)== "123.45"
 
 def test_is_video_file():
     assert is_video_file("test.mp4") is True
