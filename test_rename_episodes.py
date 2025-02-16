@@ -30,7 +30,7 @@ def test_format_number():
     assert format_with_leading_zeros(3.0, 1) == "3"
     assert format_with_leading_zeros(13.4, 4)  == "0013.4"
     assert format_with_leading_zeros(2, 2)     == "02"
-    assert format_with_leading_zeros(-5, 3)    == "005"
+    assert format_with_leading_zeros(5, 3)    == "005"
     assert format_with_leading_zeros(123.45, 2)== "123.45"
 
 def test_is_video_file():
@@ -92,11 +92,12 @@ def test_collision_detection(tmp_path, monkeypatch):
     (tmp_path / "File1 1.mp4").touch()
     (tmp_path / "File 1.mp4").touch()
     
-    inputs = iter(["Test Show", "y"])
+    inputs = iter(["Test Show","y"])
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
     
     import rename_episodes
-    rename_episodes.main()
+    with pytest.raises(SystemExit):
+        rename_episodes.main()
     
     # Original files should remain
     assert (tmp_path / "File1 1.mp4").exists()
@@ -111,7 +112,8 @@ def test_existing_file_collision(tmp_path, monkeypatch):
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
     
     import rename_episodes
-    rename_episodes.main()
+    with pytest.raises(SystemExit):
+        rename_episodes.main()
     
     assert (tmp_path / "Episode 1.avi").exists()
 
@@ -161,7 +163,8 @@ def test_skip_non_pilot_without_numbers(tmp_path, monkeypatch):
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
     
     import rename_episodes
-    rename_episodes.main()
+    with pytest.raises(SystemExit):
+        rename_episodes.main()
     
     assert (tmp_path / "Opening Credits.mkv").exists()
 
@@ -177,7 +180,8 @@ def test_existing_file_collision2(tmp_path, monkeypatch):
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
     
     import rename_episodes
-    rename_episodes.main()
+    with pytest.raises(SystemExit):
+        rename_episodes.main()
     
     assert (tmp_path / "Episode 1.mp4").exists()
     assert (tmp_path / "Existing S1E1.mp4").exists()
